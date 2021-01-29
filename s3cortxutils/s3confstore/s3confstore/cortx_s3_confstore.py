@@ -202,6 +202,9 @@ class S3CortxConfStore:
     getprivateip = subparsers.add_parser('getprivateip', help='get privateip of the host of given machine-id')
     getprivateip.add_argument('--machineid', help='machine-id of the host, whose private ip to be read', type=str, required=True)
 
+    getpublicip = subparsers.add_parser('getpublicip', help='get publicip of the host of given machine-id')
+    getpublicip.add_argument('--machineid', help='machine-id of the host, whose public ip to be read', type=str, required=True)
+
     gets3instancecount = subparsers.add_parser('gets3instancecount', help='get s3instance count for node of given machine-id')
     gets3instancecount.add_argument('--machineid',
                                   help='machine-id of the node, whose s3instance count to be read',
