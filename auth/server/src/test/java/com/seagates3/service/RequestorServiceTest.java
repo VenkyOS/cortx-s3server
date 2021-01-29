@@ -42,7 +42,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.internal.WhiteboxImpl;
 import org.slf4j.LoggerFactory;
-
 import java.util.Map;
 
 import static org.hamcrest.core.StringContains.containsString;
@@ -56,8 +55,8 @@ import static org.powermock.api.mockito.PowerMockito.*;
 
 @RunWith(PowerMockRunner.class)
     @PrepareForTest({RequestorService.class, DAODispatcher.class,
-                     LoggerFactory.class,    S3Perf.class})
-    @PowerMockIgnore("javax.management.*")
+                     LoggerFactory.class,    S3Perf.class,
+                     System.class}) @PowerMockIgnore("javax.management.*")
     @MockPolicy(Slf4jMockPolicy.class) public class RequestorServiceTest {
 
     private AccessKeyDAO accessKeyDAO;
@@ -117,6 +116,8 @@ import static org.powermock.api.mockito.PowerMockito.*;
         when(DAODispatcher.getResourceDAO(DAOResource.REQUESTOR))
             .thenReturn(requestorDAO);
         when(requestorDAO.find(accessKey)).thenThrow(DataAccessException.class);
+        mockStatic(System.class);
+        when(System.currentTimeMillis()).thenReturn(10000000000000L);
 
         RequestorService.getRequestor(clientRequestToken);
     }
@@ -126,6 +127,8 @@ import static org.powermock.api.mockito.PowerMockito.*;
             InternalServerException
                 .class) public void getRequestorTest_AccessKeyFindShouldThrowException()
         throws Exception {
+      mockStatic(System.class);
+      when(System.currentTimeMillis()).thenReturn(10000000000000L);
       when(accessKeyDAO.find(accessKeyID)).thenThrow(DataAccessException.class);
 
       RequestorService.getRequestor(clientRequestToken);
