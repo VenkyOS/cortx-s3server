@@ -154,11 +154,11 @@ backend s3-auth
     target.write(str1)
     target.write(
         "    bind %s:80 ##### localhost 80 required for Auth - S3 connection\n"
-        "    #bind %s:443 ssl crt /etc/ssl/stx/stx.pem ### localhost required for CSM/UDX\n"
+        "    bind %s:443 ssl crt /etc/ssl/stx/stx.pem ### localhost required for CSM/UDX\n"
         "    bind %s:80\n"
-        "    #bind %s:443 ssl crt /etc/ssl/stx/stx.pem\n"
+        "    bind %s:443 ssl crt /etc/ssl/stx/stx.pem\n"
         "    bind %s:80\n"
-        "    #bind %s:443 ssl crt /etc/ssl/stx/stx.pem\n"
+        "    bind %s:443 ssl crt /etc/ssl/stx/stx.pem\n"
         % (localhost, localhost, pvt_ip, pvt_ip, pub_ip, pub_ip))
     target.write(str2)
     for i in range(0, numS3Instances):
