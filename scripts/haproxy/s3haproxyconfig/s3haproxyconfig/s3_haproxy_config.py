@@ -88,14 +88,14 @@ class S3HaproxyConfig:
         os.remove(dummy_file)
 
     #Set the string literals to be added to config file
-    str1 = '''
+    frontend_s3main_text = '''
 #----------------------------------------------------------------------
 # FrontEnd S3 Configuration
 #----------------------------------------------------------------------
 frontend s3-main
     # s3 server port
 '''
-    str2 = '''
+    backend_s3main_text = '''
 
     option forwardfor
     default_backend s3-main
@@ -124,7 +124,7 @@ backend s3-main
     # Replace below line
 '''
 
-    str3 = '''
+    backend_s3auth_text = '''
 #----------------------------------------------------------------------
 # BackEnd roundrobin as balance algorith for s3 auth server
 #----------------------------------------------------------------------
@@ -139,7 +139,7 @@ backend s3-auth
 
 '''
 
-    str4 = '''
+    new_line_text = '''
 '''
 
     #Initialize port numbers
@@ -151,7 +151,7 @@ backend s3-auth
     target = open(cfg_file, "a+")
 
     target.write(header_text)
-    target.write(str1)
+    target.write(frontend_s3main_text)
     target.write(
         "    bind %s:80 ##### localhost 80 required for Auth - S3 connection\n"
         "    bind %s:443 ssl crt /etc/ssl/stx/stx.pem ### localhost required for CSM/UDX\n"
@@ -160,17 +160,17 @@ backend s3-auth
         "    bind %s:80\n"
         "    bind %s:443 ssl crt /etc/ssl/stx/stx.pem\n"
         % (localhost, localhost, pvt_ip, pvt_ip, pub_ip, pub_ip))
-    target.write(str2)
+    target.write(backend_s3main_text)
     for i in range(0, numS3Instances):
         target.write(
         "    server s3-instance-%s %s:%s check maxconn 110        # s3 instance %s\n"
         % (i+1, pvt_ip, s3inport+i, i+1))
-    target.write(str3)
+    target.write(backend_s3auth_text)
     for i in range(0, 1):
         target.write(
         "    server s3authserver-instance%s %s:%s #check ssl verify required ca-file /etc/ssl/stx-s3/s3auth/s3authserver.crt   # s3 auth server instance %s\n"
         % (i+1, pvt_ip, s3auport+i, i+1))
-    target.write(str4)
+    target.write(new_line_text)
     target.write(footer_text)
 
     target.close()

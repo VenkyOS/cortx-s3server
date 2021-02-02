@@ -200,6 +200,27 @@ class S3ConfStoreAPIsUT(unittest.TestCase):
     self.assertEqual(mock_get_return.call_count, 2)
 
   @mock.patch.object(Conf, 'get')
+  def test_get_publicip_emptystring(self, mock_get_return):
+    mock_get_return.return_value = {"mockmachineid-A": "mockserver_1"}
+    s3confstore = S3CortxConfStore()
+    self.assertEqual(s3confstore.get_publicip("machineid-B"), "")
+    self.assertEqual(mock_get_return.call_count, 1)
+
+  @mock.patch.object(Conf, 'get')
+  def test_get_publicip_success(self, mock_get_return):
+    mock_get_return.side_effect = [{"mockmachineid-A": "mockserver_1"}, "1.2.3.4"]
+    s3confstore = S3CortxConfStore()
+    self.assertEqual(s3confstore.get_publicip("mockmachineid-A"), "1.2.3.4")
+    self.assertEqual(mock_get_return.call_count, 2)
+
+  @mock.patch.object(Conf, 'get')
+  def test_get_publicip_check(self, mock_get_return):
+    mock_get_return.side_effect = [{"mockmachineid-A": "mockserver_1"}, "5"]
+    s3confstore = S3CortxConfStore()
+    self.assertEqual(s3confstore.get_publicip("mockmachineid-A"), "5")
+    self.assertEqual(mock_get_return.call_count, 2)
+
+  @mock.patch.object(Conf, 'get')
   def test_get_nodenames_list_empty(self, mock_get_return):
     mock_get_return.return_value = None
     s3confstore = S3CortxConfStore()
